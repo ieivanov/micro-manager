@@ -573,19 +573,19 @@ int BaslerCamera::Initialize()
 		 }
 
 
-		////FALCON Setup I/O Lines and Trigger Options////
-		CEnumerationPtr(nodeMap_->GetNode("LineSelector"))->FromString("Line3");
-		CEnumerationPtr(nodeMap_->GetNode("LineMode"))->FromString("Output");
-		CEnumerationPtr(nodeMap_->GetNode("LineSource"))->FromString("ExposureActive");
-		CBooleanPtr(nodeMap_->GetNode("LineInverter"))->SetValue(true);
+		//////FALCON Setup I/O Lines and Trigger Options////
+		//CEnumerationPtr(nodeMap_->GetNode("LineSelector"))->FromString("Line3");
+		//CEnumerationPtr(nodeMap_->GetNode("LineMode"))->FromString("Output");
+		//CEnumerationPtr(nodeMap_->GetNode("LineSource"))->FromString("ExposureActive");
+		//CBooleanPtr(nodeMap_->GetNode("LineInverter"))->SetValue(true);
 
-		CEnumerationPtr(nodeMap_->GetNode("LineSelector"))->FromString("Line4");
-		CEnumerationPtr(nodeMap_->GetNode("LineMode"))->FromString("Input");
-		CBooleanPtr(nodeMap_->GetNode("LineInverter"))->SetValue(true);
+		//CEnumerationPtr(nodeMap_->GetNode("LineSelector"))->FromString("Line4");
+		//CEnumerationPtr(nodeMap_->GetNode("LineMode"))->FromString("Input");
+		//CBooleanPtr(nodeMap_->GetNode("LineInverter"))->SetValue(true);
 
-		CEnumerationPtr(nodeMap_->GetNode("TriggerSelector"))->FromString("FrameStart");
-		CEnumerationPtr(nodeMap_->GetNode("TriggerSource"))->FromString("Line4");
-		CEnumerationPtr(nodeMap_->GetNode("TriggerActivation"))->FromString("RisingEdge");
+		//CEnumerationPtr(nodeMap_->GetNode("TriggerSelector"))->FromString("FrameStart");
+		//CEnumerationPtr(nodeMap_->GetNode("TriggerSource"))->FromString("Line4");
+		//CEnumerationPtr(nodeMap_->GetNode("TriggerActivation"))->FromString("RisingEdge");
 
 
 		////Shutter mode//////	
@@ -1474,11 +1474,11 @@ int BaslerCamera::OnTriggerMode(MM::PropertyBase* pProp, MM::ActionType eAct)
 					{
 						pProp->Set(TriggerMode->ToString().c_str());
 					}
-					CEnumerationPtr TriggerSource( nodeMap_->GetNode("TriggerSource"));
+/*					CEnumerationPtr TriggerSource( nodeMap_->GetNode("TriggerSource"));
 					if(TriggerSource != NULL && IsAvailable(TriggerSource))
 					{
 						TriggerSource->FromString("Line1");
-					}			
+					}	*/		
 				}
 		}		
 	}
