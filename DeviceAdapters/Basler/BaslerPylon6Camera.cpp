@@ -1192,7 +1192,7 @@ int BaslerCamera::OnHeight(MM::PropertyBase* pProp, MM::ActionType eAct)
 		try{
 			if(IsAvailable(Height) )
 				{
-					binningFactor_ = to_string (Height->GetValue());
+					//binningFactor_ = to_string (Height->GetValue());
 					pProp->Set((long)Height->GetValue());	
 				}	
 		}
@@ -1248,7 +1248,7 @@ int BaslerCamera::OnWidth(MM::PropertyBase* pProp, MM::ActionType eAct)
 		try{
 			if(IsAvailable(Width) )
 				{
-					binningFactor_ = to_string (Width->GetValue());
+					//binningFactor_ = to_string (Width->GetValue());
 					pProp->Set((long)Width->GetValue());	
 				}	
 		}
