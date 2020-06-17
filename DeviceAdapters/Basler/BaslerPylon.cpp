@@ -64,7 +64,7 @@ using namespace Basler_UniversalCameraParams;
 using namespace GenApi;
 using namespace GenICam;
 
-#include "BaslerPylon6Camera.h"
+#include "BaslerPylon.h"
 #include <sstream>
 #include <math.h>
 #include "ModuleInterface.h"
