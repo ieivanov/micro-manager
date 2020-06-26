@@ -42,6 +42,7 @@
 #include "ImageMetadata.h"
 #include "ImgBuffer.h"
 #include <iostream>
+#include <pylon/PylonIncludes.h>
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,7 @@ enum
 };
 
 //////////////////////////////////////////////////////////////////////////////
-// Basler USB Ace camera class
+// Basler camera class
 //////////////////////////////////////////////////////////////////////////////
 //Callback class for putting frames in circular buffer as they arrive
 
@@ -74,7 +75,7 @@ public:
 
 	void GetName(char* name) const;      
 	bool Busy() {return false;}
-	bool IsNeededPylonVersionExists();
+	
 
 	// MMCamera API
 	// ------------
@@ -105,7 +106,7 @@ public:
 	void CopyToImageBuffer(CGrabResultPtr image);
 	CImageFormatConverter *converter;
     CircularBufferInserter *ImageHandler_;
-	
+	std::string EnumToString(EDeviceAccessiblityInfo DeviceAccessiblityInfo);
 
 	/**
 	* Starts continuous acquisition.
@@ -121,17 +122,20 @@ public:
 	*/
 	bool IsCapturing();
 
+	//Genicam Callback
+	void ResultingFramerateCallback(GenApi::INode* pNode);
+
+
 	// action interface
 	// ----------------
 	int OnWidth(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnHeight(MM::PropertyBase* pProp, MM::ActionType eAct);
-	int OnHeigth(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnBinning(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnBinningMode(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnPixelType(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnGain(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnOffset(MM::PropertyBase* pProp, MM::ActionType eAct);
-	// int OnSensorReadoutMode(MM::PropertyBase* pProp, MM::ActionType eAct);
+	int OnSensorReadoutMode(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnShutterMode(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnDeviceLinkThroughputLimit(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnInterPacketDelay(MM::PropertyBase* pProp, MM::ActionType eAct);
@@ -140,12 +144,13 @@ public:
 	int OnAutoGain(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnAutoExpore(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnTemperature(MM::PropertyBase* pProp, MM::ActionType eAct);
-	int OnTemperatureStatus(MM::PropertyBase* pProp, MM::ActionType eAct);
+	int OnTemperatureState(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnReverseX(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnReverseY(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnAcqFramerateEnable(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnAcqFramerate(MM::PropertyBase* pProp, MM::ActionType eAct);
-	
+	int OnResultingFramerate(MM::PropertyBase* pProp, MM::ActionType eAct);
+	int OnTriggerSource(MM::PropertyBase* pProp, MM::ActionType eAct);
 
 private:
 
@@ -164,13 +169,14 @@ private:
 	double acqFramerate_, acqFramerateMax_, acqFramerateMin_;
 	int64_t DeviceLinkThroughputLimit_;
 	int64_t InterPacketDelay_;
+	double ResultingFrameRatePrevious;
 	
 	std::string pixelType_;
 	std::string binningFactor_;
 	std::string sensorReadoutMode_;
 	std::string shutterMode_;
 	std::string setAcqFrm_;
-	std::string temperatureStatus_;
+	std::string temperatureState_;
 	std::string reverseX_, reverseY_;
 	void* imgBuffer_;
 	long imgBufferSize_;
