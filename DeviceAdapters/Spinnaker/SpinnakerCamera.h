@@ -45,6 +45,9 @@ public:
 
 	int MoveImageToCircularBuffer();
 
+	// Device Properties
+	int OnTemperature(MM::PropertyBase* pProp, MM::ActionType eAct);
+
 	// Acquisition Control
 	int OnPixelFormat(MM::PropertyBase* pProp, MM::ActionType eAct); 
 	int OnTestPattern(MM::PropertyBase* pProp, MM::ActionType eAct);
@@ -55,6 +58,9 @@ public:
 	int OnBinningEnum(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnBinningInt(MM::PropertyBase* pProp, MM::ActionType eAct);
 	int OnBinningModeEnum(MM::PropertyBase* pProp, MM::ActionType eAct);
+	int OnADCBitDepth(MM::PropertyBase* pProp, MM::ActionType eAct);
+	int OnReverseX(MM::PropertyBase* pProp, MM::ActionType eAct);
+	int OnReverseY(MM::PropertyBase* pProp, MM::ActionType eAct);
 
 	// Gain Control
 	int OnGain(MM::PropertyBase* pProp, MM::ActionType eAct);

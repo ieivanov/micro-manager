@@ -6,6 +6,7 @@
 #include "../../MMDevice/ModuleInterface.h"
 #include <vector>
 #include <string>
+#include <algorithm>
 
 
 std::wstring StringToWString(const std::string& str)
@@ -255,12 +256,12 @@ int SpinnakerCamera::Initialize()
 
 	try
 	{
-		GENAPI::CBooleanPtr AFRCE = nm.GetNode("AcquisitionFrameRateEnabled");
+		GENAPI::CBooleanPtr AFRCE = nm.GetNode("AcquisitionFrameRateEnable");
 		if (isNodeAvailable<NAM_READ>(AFRCE))
 		{
 			LogMessage("Creating frame rate enabled...");
 			pAct = new CPropertyAction(this, &SpinnakerCamera::OnFrameRateEnabled);
-			CreateProperty("Frame Rate Control Enabled", "1", MM::Integer, false, pAct);
+			CreateProperty("Frame Rate Control Enabled", "0", MM::Integer, false, pAct);
 			AddAllowedValue("Frame Rate Control Enabled", "1");
 			AddAllowedValue("Frame Rate Control Enabled", "0");
 			//CreatePropertyFromBool("Frame Rate Control Enabled", m_cam->AcquisitionFrameRateEnable, &SpinnakerCamera::OnFrameRateEnabled);
@@ -269,6 +270,25 @@ int SpinnakerCamera::Initialize()
 		else
 		{
 			LogMessage("Failed to create frame rate enabled...");
+		}
+	}
+	catch (SPKR::Exception &ex)
+	{
+		LogMessage(ex.what());
+	}
+
+	try
+	{
+		GENAPI::CEnumerationPtr ADC_enumeration = nm.GetNode("AdcBitDepth");
+		if (isNodeAvailable<NAM_READ>(ADC_enumeration))
+		{
+			pAct = new CPropertyAction(this, &SpinnakerCamera::OnADCBitDepth);
+			GENAPI::StringList_t symbolics;
+			ADC_enumeration->GetSymbolics(symbolics);
+
+			CreateProperty("ADC Bit Depth", symbolics[0].c_str(), MM::String, false, pAct);
+			for (unsigned int i = 0; i < symbolics.size(); i++)
+				AddAllowedValue("ADC Bit Depth", symbolics[i].c_str());
 		}
 	}
 	catch (SPKR::Exception &ex)
@@ -374,6 +394,11 @@ int SpinnakerCamera::Initialize()
 	CreatePropertyFromFloat("Gamma", m_cam->Gamma, &SpinnakerCamera::OnGamma);
 	CreatePropertyFromFloat("Black Level", m_cam->BlackLevel, &SpinnakerCamera::OnBlackLevel);
 	CreatePropertyFromEnum("Black Level Auto", m_cam->BlackLevelAuto, &SpinnakerCamera::OnBlackLevelAuto);
+
+	CreateProperty(MM::g_Keyword_CameraID, m_SN, MM::String, true);
+	CreatePropertyFromFloat("Temperature", m_cam->DeviceTemperature, &SpinnakerCamera::OnTemperature);
+	CreatePropertyFromBool("Reverse X", m_cam->ReverseX, &SpinnakerCamera::OnReverseX);
+	CreatePropertyFromBool("Reverse Y", m_cam->ReverseY, &SpinnakerCamera::OnReverseY);
 
 	try
 	{
@@ -1077,7 +1102,7 @@ int SpinnakerCamera::OnTestPattern(MM::PropertyBase * pProp, MM::ActionType eAct
 int SpinnakerCamera::OnFrameRateEnabled(MM::PropertyBase * pProp, MM::ActionType eAct)
 {
 	//return OnBoolPropertyChanged(m_cam->AcquisitionFrameRateEnable, pProp, eAct);
-	GENAPI::CBooleanPtr AFRCE = m_cam->GetNodeMap().GetNode("AcquisitionFrameRateEnabled");
+	GENAPI::CBooleanPtr AFRCE = m_cam->GetNodeMap().GetNode("AcquisitionFrameRateEnable");
 
 	if (eAct == MM::BeforeGet)
 	{
@@ -1314,6 +1339,27 @@ int SpinnakerCamera::OnBlackLevelAuto(MM::PropertyBase * pProp, MM::ActionType e
 {
 	return OnEnumPropertyChanged(m_cam->BlackLevelAuto, pProp, eAct);
 }
+
+int SpinnakerCamera::OnTemperature(MM::PropertyBase * pProp, MM::ActionType eAct)
+{
+	return OnFloatPropertyChanged(m_cam->DeviceTemperature, pProp, eAct);
+}
+
+int SpinnakerCamera::OnADCBitDepth(MM::PropertyBase * pProp, MM::ActionType eAct)
+{
+	return OnEnumPropertyChanged(m_cam->AdcBitDepth, pProp, eAct);
+}
+
+int SpinnakerCamera::OnReverseX(MM::PropertyBase * pProp, MM::ActionType eAct)
+{
+	return OnBoolPropertyChanged(m_cam->ReverseX, pProp, eAct);
+}
+
+int SpinnakerCamera::OnReverseY(MM::PropertyBase * pProp, MM::ActionType eAct)
+{
+	return OnBoolPropertyChanged(m_cam->ReverseY, pProp, eAct);
+}
+
 
 int SpinnakerCamera::OnTriggerSelector(MM::PropertyBase * pProp, MM::ActionType eAct)
 {
