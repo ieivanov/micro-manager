@@ -193,9 +193,6 @@ private:
 	MMThreadLock m_pixelLock;
 	bool m_stopOnOverflow;
 
-
-	SPKR::TriggerModeEnums m_aqTriggerMode;
-	SPKR::TriggerSourceEnums m_aqTriggerSource;
 	GENAPI::StringList_t m_gpioLines;
 };
 

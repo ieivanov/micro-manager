@@ -121,7 +121,8 @@ public class MagellanDataManager implements DataSink, DataSourceInterface,
               // parameters to different files within the dataset
               MagellanMD.getWidth(summaryMetadata),
               MagellanMD.getHeight(summaryMetadata),
-              MagellanMD.getBytesPerPixel(summaryMetadata), true);
+              AcqEngMetadata.isRGB(summaryMetadata) ? 1 : MagellanMD.getBytesPerPixel(summaryMetadata),
+              true, null, AcqEngMetadata.isRGB(summaryMetadata));
 
       if (showDisplay_) {
          createDisplay();
@@ -138,7 +139,7 @@ public class MagellanDataManager implements DataSink, DataSourceInterface,
                  ? (acq_.isFinished() ? " (Finished)" : " (Running)") : " (Loaded)"));
          //add functions so display knows how to parse time and z infomration from image tags
          display_.setReadTimeMetadataFunction((JSONObject tags) -> AcqEngMetadata.getElapsedTimeMs(tags));
-         display_.setReadZMetadataFunction((JSONObject tags) -> AcqEngMetadata.getZPositionUm(tags));
+         display_.setReadZMetadataFunction((JSONObject tags) -> AcqEngMetadata.getStageZIntended(tags));
 
          //add in custom mouse listener for the canvas
          mouseListener_ = new MagellanMouseListener(this, display_);
@@ -210,6 +211,10 @@ public class MagellanDataManager implements DataSink, DataSourceInterface,
             }
          });
       }
+   }
+
+   public void updateExploreZControls(int i) {
+      zExploreControls_.updateExploreZControls(i);
    }
 
    /**

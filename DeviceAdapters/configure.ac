@@ -550,6 +550,7 @@ m4_define([device_adapter_dirs], [m4_strip([
    SimpleCam
    Skyra
    SmarActHCU-3D
+   SouthPort
    SpectralLMM5
    Spot
    SutterLambda
@@ -564,6 +565,7 @@ m4_define([device_adapter_dirs], [m4_strip([
    Tofra
    Toptica_iBeamSmartCW
    TriggerScope
+   TriggerScopeMM
    USBManager
    UserDefinedSerial
    UserDefinedSerial/unittest
