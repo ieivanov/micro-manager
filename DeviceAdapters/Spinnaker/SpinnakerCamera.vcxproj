@@ -79,7 +79,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>"..\..\..\3rdparty\FLIR Systems\Spinnaker\2.0.0.147\lib64\vs2015";$(LibraryPath)</LibraryPath>
+    <LibraryPath>"..\..\..\3rdparty\FLIR Systems\Spinnaker\2.0.0.147\lib\vs2015";$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -87,7 +87,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>"..\..\..\3rdparty\FLIR Systems\Spinnaker\2.0.0.147\lib64\vs2015";$(LibraryPath)</LibraryPath>
+    <LibraryPath>"..\..\..\3rdparty\FLIR Systems\Spinnaker\2.0.0.147\lib\vs2015";$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
