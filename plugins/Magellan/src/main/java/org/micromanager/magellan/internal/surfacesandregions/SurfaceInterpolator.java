@@ -19,11 +19,7 @@ package org.micromanager.magellan.internal.surfacesandregions;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -53,7 +49,6 @@ public abstract class SurfaceInterpolator extends XYFootprint {
 
    //surface coordinates are neccessarily associated with the coordinate space of particular xy and z devices
    private final String zDeviceName_;
-   private final boolean towardsSampleIsPositive_;
    protected volatile TreeSet<Point3d> points_;
    private MonotoneChain mChain_;
    protected volatile Vector2D[] convexHullVertices_;
@@ -101,19 +96,6 @@ public abstract class SurfaceInterpolator extends XYFootprint {
             return new Thread(r, "Interpolation calculation thread ");
          }
       });
-      try {
-         int dir = Magellan.getCore().getFocusDirection(zDevice);
-         if (dir > 0) {
-            towardsSampleIsPositive_ = true;
-         } else if (dir < 0) {
-            towardsSampleIsPositive_ = false;
-         } else {
-            throw new Exception();
-         }
-      } catch (Exception e) {
-         Log.log("Couldn't get focus direction of Z drive. Configre using Tools--Hardware Configuration Wizard");
-         throw new RuntimeException();
-      }
 
    }
 
@@ -212,7 +194,7 @@ public abstract class SurfaceInterpolator extends XYFootprint {
     */
    public boolean isPositionCompletelyAboveSurface(Point2D.Double[] positionCorners,
            SurfaceInterpolator surface, double zPos, boolean extrapolate) {
-      return testPositionRelativeToSurface(positionCorners, surface, zPos, ABOVE_SURFACE, extrapolate);
+      return testPositionRelativeToSurface(positionCorners, surface, zPos, ABOVE_SURFACE,  extrapolate);
    }
 
    /**
@@ -223,7 +205,8 @@ public abstract class SurfaceInterpolator extends XYFootprint {
     */
    public boolean isPositionCompletelyBelowSurface(Point2D.Double[] positionCorners,
            SurfaceInterpolator surface, double zPos, boolean extrapolate) {
-      return testPositionRelativeToSurface(positionCorners, surface, zPos, BELOW_SURFACE, extrapolate);
+      return testPositionRelativeToSurface(positionCorners, surface, zPos, BELOW_SURFACE,
+              extrapolate);
    }
 
    /**
@@ -245,10 +228,26 @@ public abstract class SurfaceInterpolator extends XYFootprint {
          } else {
             interpVal = surface.getCurentInterpolation().getInterpolatedValue(point.x, point.y);
          }
-         if ((towardsSampleIsPositive_ && mode == ABOVE_SURFACE && zPos >= interpVal)
-                 || (towardsSampleIsPositive_ && mode == BELOW_SURFACE && zPos <= interpVal)
-                 || (!towardsSampleIsPositive_ && mode == ABOVE_SURFACE && zPos <= interpVal)
-                 || (!towardsSampleIsPositive_ && mode == BELOW_SURFACE) && zPos >= interpVal) {
+         boolean towardsSampleIsPositive;
+         try {
+            String zDevice = Magellan.getCore().getFocusDevice();
+            int dir = Magellan.getCore().getFocusDirection(zDevice);
+
+            if (dir > 0) {
+               towardsSampleIsPositive = true;
+            } else if (dir < 0) {
+               towardsSampleIsPositive = false;
+            } else {
+               throw new Exception();
+            }
+         } catch (Exception e) {
+            Log.log("Couldn't get focus direction of Z drive. Configre using Tools--Hardware Configuration Wizard");
+            throw new RuntimeException();
+         }
+         if ((towardsSampleIsPositive && mode == ABOVE_SURFACE && zPos >= interpVal)
+                 || (towardsSampleIsPositive && mode == BELOW_SURFACE && zPos <= interpVal)
+                 || (!towardsSampleIsPositive && mode == ABOVE_SURFACE && zPos <= interpVal)
+                 || (!towardsSampleIsPositive && mode == BELOW_SURFACE) && zPos >= interpVal) {
             return false;
          }
       }
@@ -287,10 +286,10 @@ public abstract class SurfaceInterpolator extends XYFootprint {
             } else {
                interpVal = surface.getCurentInterpolation().getInterpolatedValue(stageCoords.x, stageCoords.y);
             }
-            if ((towardsSampleIsPositive_ && mode == ABOVE_SURFACE && zPos >= interpVal)
-                    || (towardsSampleIsPositive_ && mode == BELOW_SURFACE && zPos <= interpVal)
-                    || (!towardsSampleIsPositive_ && mode == ABOVE_SURFACE && zPos <= interpVal)
-                    || (!towardsSampleIsPositive_ && mode == BELOW_SURFACE) && zPos >= interpVal) {
+            if (( mode == ABOVE_SURFACE && zPos >= interpVal)
+                    || (mode == BELOW_SURFACE && zPos <= interpVal)
+                    || ( mode == ABOVE_SURFACE && zPos <= interpVal)
+                    || ( mode == BELOW_SURFACE) && zPos >= interpVal) {
                return false;
             }
          }
@@ -570,8 +569,8 @@ public abstract class SurfaceInterpolator extends XYFootprint {
       }
    }
 
-   public synchronized Point3d[] getPoints() {
-      return points_.toArray(new Point3d[0]);
+   public synchronized List<Point3d> getPoints() {
+      return Arrays.asList(points_.toArray(new Point3d[0]));
    }
 
 }
